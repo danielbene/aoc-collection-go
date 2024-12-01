@@ -7,10 +7,13 @@ import (
 
 // ---------------------------------------------------------
 
-var solutionP1 = `x`
-var exampleP1 = `asd
-qwe
-fgh`
+var solutionP1 = `11`
+var exampleP1 = `3   4
+4   3
+2   5
+1   3
+3   9
+3   3`
 
 func Test_part1(t *testing.T) {
 	fmt.Println("---------PART1---------")
@@ -22,13 +25,15 @@ func Test_part1(t *testing.T) {
 
 // ---------------------------------------------------------
 
-var solutionP2 = `x`
-var exampleP2 = `asd
-qwe
-fgh`
+var solutionP2 = `31`
+var exampleP2 = `3   4
+4   3
+2   5
+1   3
+3   9
+3   3`
 
 func Test_part2(t *testing.T) {
-	return
 	fmt.Println("---------PART2---------")
 	testSolution := Part2(exampleP2)
 	if testSolution != solutionP2 {
