@@ -81,8 +81,9 @@ func Part2(puzzleInput string) string {
 }
 
 func checkLevels(parts []string) bool {
-	isLevelSafe := true
+	isCorrectDiff := true
 	isDescending := true
+	isAscending := true
 
 	for i := 0; i < len(parts)-1; i++ {
 		a, _ := strconv.Atoi(parts[i])
@@ -93,23 +94,19 @@ func checkLevels(parts []string) bool {
 			isDescending = false
 		}
 
+		if isAscending && a > b {
+			isAscending = false
+		}
+
+		if !isAscending && !isDescending {
+			break
+		}
+
 		if !((-3 <= diff && diff <= -1) || (3 >= diff && diff >= 1)) {
-			isLevelSafe = false
+			isCorrectDiff = false
 			break
 		}
 	}
 
-	if isLevelSafe && !isDescending {
-		for i := 0; i < len(parts)-1; i++ {
-			a, _ := strconv.Atoi(parts[i])
-			b, _ := strconv.Atoi(parts[i+1])
-
-			if a > b {
-				isLevelSafe = false
-				break
-			}
-		}
-	}
-
-	return isLevelSafe
+	return isCorrectDiff && (isAscending || isDescending)
 }

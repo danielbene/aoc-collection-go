@@ -1,5 +1,5 @@
 Part1 solution: 639
-Part1 time: 445.101µs
+Part1 time: 405.762µs
 
 Part2 solution: 674
-Part2 time: 4.183516ms
+Part2 time: 1.908369ms
