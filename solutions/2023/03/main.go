@@ -125,6 +125,7 @@ func Part1(puzzleInput string) string {
 	return strconv.Itoa(sum)
 }
 
+// TODO: this is an abomination ATM, make it pretty pls
 func Part2(puzzleInput string) string {
 	var (
 		lines []string
@@ -136,7 +137,7 @@ func Part2(puzzleInput string) string {
 		lines = append(lines, scanner.Text())
 	}
 
-	// lineCnt := len(lines)
+	lineCnt := len(lines)
 	for currentLineId, line := range lines {
 		xCnt := len(line)
 
@@ -169,42 +170,43 @@ func Part2(puzzleInput string) string {
 
 			// above
 			if currentLineId > 0 {
-				// for i := start - 1; i <= end; i++ {
-				/*for i := start - 3; i <= end+2; i++ {
-					if i < 0 || i >= xCnt {
-						continue
-					}
-
-					fmt.Print(string(lines[currentLineId-1][i]))
-				}
-				fmt.Println()*/
-
 				above := string(lines[currentLineId-1][start-3 : end+3])
 
-				// if one of the middles is a digit than we good
 				if checkDigit(above[2]) || checkDigit(above[3]) || checkDigit(above[4]) {
-					fmt.Println(above)
 					r := regexp.MustCompile(`\d+`)
 					for _, val := range r.FindAllStringSubmatch(above, -1) {
-						fmt.Print(val)
-						fmt.Print(", ")
+						idx := strings.Index(above, val[0])
+						l := len(val[0]) - 1
+
+						if idx >= 2 && idx <= 4 || idx+l >= 2 && idx+l <= 4 {
+							num, _ := strconv.Atoi(val[0])
+							gear = append(gear, num)
+						}
 					}
-					fmt.Println()
 				}
 			}
 
 			// below
-			/*if currentLineId < lineCnt-1 {
-				// for i := start - 1; i <= end; i++ {
-				for i := start - 3; i <= end+2; i++ {
-					if i < 0 || i >= xCnt {
-						continue
-					}
+			if currentLineId < lineCnt-1 {
+				below := string(lines[currentLineId+1][start-3 : end+3])
 
-					fmt.Print(string(lines[currentLineId+1][i]))
+				if checkDigit(below[2]) || checkDigit(below[3]) || checkDigit(below[4]) {
+					r := regexp.MustCompile(`\d+`)
+					for _, val := range r.FindAllStringSubmatch(below, -1) {
+						idx := strings.Index(below, val[0])
+						l := len(val[0]) - 1
+
+						if idx >= 2 && idx <= 4 || idx+l >= 2 && idx+l <= 4 {
+							num, _ := strconv.Atoi(val[0])
+							gear = append(gear, num)
+						}
+					}
 				}
-				fmt.Println()
-			}*/
+			}
+
+			if len(gear) == 2 {
+				sum += gear[0] * gear[1]
+			}
 		}
 	}
 
@@ -217,8 +219,4 @@ func checkSpec(ch byte) bool {
 
 func checkDigit(ch byte) bool {
 	return unicode.IsDigit(rune(ch))
-}
-
-func checkAsterisk(ch byte) bool {
-	return string(ch) == "*"
 }
