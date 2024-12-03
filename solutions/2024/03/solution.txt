@@ -1,0 +1,5 @@
+Part1 solution: 188192787
+Part1 time: 1.065086ms
+
+Part2 solution: 113965544
+Part2 time: 1.295523ms
