@@ -32,29 +32,15 @@ func main() {
 
 // -----------------------------------------------------------
 
-// TODO: int return usage in skeleton
-
-const (
-	xmas = "XMAS"
-	samx = "SAMX"
+var (
+	lines     []string
+	lineCount = 0
+	charCount = 0
 )
 
 func Part1(puzzleInput string) int {
-	var (
-		lines     []string
-		count     = 0
-		lineCount = 0
-		charCount = 0
-	)
-
-	scanner := bufio.NewScanner(strings.NewReader(puzzleInput))
-	for scanner.Scan() {
-		line := scanner.Text()
-		lines = append(lines, line)
-	}
-
-	lineCount = len(lines)
-	charCount = len(lines[0])
+	processInput(puzzleInput)
+	count := 0
 
 	diagCnt := 0
 	for currentLineId, line := range lines {
@@ -67,9 +53,61 @@ func Part1(puzzleInput string) int {
 		}
 	}
 
-	count += diagCnt / 2 // counted to and from so we have to halve the value
+	count += diagCnt / 2 // counted to and from so the value must be halved
 
 	return count
+}
+
+func Part2(puzzleInput string) int {
+	processInput(puzzleInput)
+	count := 0
+
+	for currentLineId, line := range lines {
+		if currentLineId >= 1 && currentLineId < lineCount-1 {
+			for idx, ch := range line {
+				if idx > 0 && idx < charCount-1 {
+					if ch == 'A' {
+						if checkWings(currentLineId, idx, lines) {
+							count++
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return count
+}
+
+func processInput(puzzleInput string) {
+	if len(lines) != 0 {
+		fmt.Println("Input already processed.")
+		return
+	}
+
+	scanner := bufio.NewScanner(strings.NewReader(puzzleInput))
+	for scanner.Scan() {
+		line := scanner.Text()
+		lines = append(lines, line)
+	}
+
+	lineCount = len(lines)
+	charCount = len(lines[0])
+}
+
+func checkWings(currentLineId int, currentCharId int, lines []string) bool {
+	leftUp := lines[currentLineId-1][currentCharId-1]
+	leftDown := lines[currentLineId+1][currentCharId-1]
+	rightUp := lines[currentLineId-1][currentCharId+1]
+	rightDown := lines[currentLineId+1][currentCharId+1]
+
+	if (leftUp == 'M' && rightDown == 'S') || (leftUp == 'S' && rightDown == 'M') {
+		if (leftDown == 'M' && rightUp == 'S') || (leftDown == 'S' && rightUp == 'M') {
+			return true
+		}
+	}
+
+	return false
 }
 
 func diagonal(count *int, currentLineId int, currentCharId int, firstRune rune, lines []string, lineCount int, charCount int) {
@@ -80,65 +118,51 @@ func diagonal(count *int, currentLineId int, currentCharId int, firstRune rune, 
 		target = "AMX"
 	}
 
-	leftUp, leftDown, rightUp, rightDown := true, true, true, true
+	leftUp, leftDown, rightUp, rightDown := 1, 1, 1, 1
 	for i, req := range target {
 		// left-up
 		row := currentLineId - i - 1
 		col := currentCharId - i - 1
-		if leftUp {
+		if leftUp == 1 {
 			if !(row >= 0 && col >= 0) || rune(lines[row][col]) != req {
-				leftUp = false
+				leftUp = 0
 			}
 		}
 
 		// left-down
 		row = currentLineId + i + 1
 		col = currentCharId - i - 1
-		if leftDown {
+		if leftDown == 1 {
 			if !(row < lineCount && col >= 0) || rune(lines[row][col]) != req {
-				leftDown = false
+				leftDown = 0
 			}
 		}
 
 		// right-up
 		row = currentLineId - i - 1
 		col = currentCharId + i + 1
-		if rightUp {
+		if rightUp == 1 {
 			if !(row >= 0 && col < charCount) || rune(lines[row][col]) != req {
-				rightUp = false
+				rightUp = 0
 			}
 		}
 
 		// right-down
 		row = currentLineId + i + 1
 		col = currentCharId + i + 1
-		if rightDown {
+		if rightDown == 1 {
 			if !(row < lineCount && col < charCount) || rune(lines[row][col]) != req {
-				rightDown = false
+				rightDown = 0
 			}
 		}
 	}
 
-	if leftUp {
-		*count++
-	}
-
-	if leftDown {
-		*count++
-	}
-
-	if rightUp {
-		*count++
-	}
-
-	if rightDown {
-		*count++
-	}
+	*count += leftUp + leftDown + rightUp + rightDown
 }
 
 func horizontal(count *int, line *string) {
-	*count += strings.Count(*line, xmas) // non overlapping count?
-	*count += strings.Count(*line, samx) // non overlapping count?
+	*count += strings.Count(*line, "XMAS")
+	*count += strings.Count(*line, "SAMX")
 }
 
 func vertical(count *int, currentLineId int, currentCharId int, firstRune rune, lines []string, lineCount int) {
@@ -160,53 +184,4 @@ func vertical(count *int, currentLineId int, currentCharId int, firstRune rune, 
 	}
 
 	*count++
-}
-
-func Part2(puzzleInput string) int {
-	var (
-		lines     []string
-		count     = 0
-		lineCount = 0
-		charCount = 0
-	)
-
-	scanner := bufio.NewScanner(strings.NewReader(puzzleInput))
-	for scanner.Scan() {
-		line := scanner.Text()
-		lines = append(lines, line)
-	}
-
-	lineCount = len(lines)
-	charCount = len(lines[0])
-
-	for currentLineId, line := range lines {
-		if currentLineId >= 1 && currentLineId < lineCount-1 {
-			for idx, ch := range line {
-				if idx > 0 && idx < charCount-1 {
-					if ch == 'A' {
-						if checkWings(currentLineId, idx, lines) {
-							count++
-						}
-					}
-				}
-			}
-		}
-	}
-
-	return count
-}
-
-func checkWings(currentLineId int, currentCharId int, lines []string) bool {
-	leftUp := lines[currentLineId-1][currentCharId-1]
-	leftDown := lines[currentLineId+1][currentCharId-1]
-	rightUp := lines[currentLineId-1][currentCharId+1]
-	rightDown := lines[currentLineId+1][currentCharId+1]
-
-	if (leftUp == 'M' && rightDown == 'S') || (leftUp == 'S' && rightDown == 'M') {
-		if (leftDown == 'M' && rightUp == 'S') || (leftDown == 'S' && rightUp == 'M') {
-			return true
-		}
-	}
-
-	return false
 }
