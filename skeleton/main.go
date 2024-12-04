@@ -1,8 +1,7 @@
 package main
 
 import (
-	"aoc/util"
-	"bufio"
+	"aoc/util/aocutil"
 	_ "embed"
 	"fmt"
 	"os"
@@ -11,61 +10,41 @@ import (
 )
 
 //go:embed input.txt
-var input string
+var inputFile string
 
 func init() {
-	input = strings.TrimRight(input, "\n")
+	inputFile = strings.TrimRight(inputFile, "\n")
 }
 
 func main() {
 	start := time.Now()
 	if os.Args[1] == "1" {
 		fmt.Println("running part1")
-		p1 := Part1(input)
-		util.Solve(p1, time.Since(start), "Part1", os.Args[2])
+		p1 := Part1(inputFile)
+		aocutil.Solve(p1, time.Since(start), "Part1", os.Args[2])
 	} else {
 		fmt.Println("running part2")
-		p2 := Part2(input)
-		util.Solve(p2, time.Since(start), "Part2", os.Args[2])
+		p2 := Part2(inputFile)
+		aocutil.Solve(p2, time.Since(start), "Part2", os.Args[2])
 	}
 }
 
 // -----------------------------------------------------------
 
-var (
-	lines     []string
-	lineCount = 0
-	charCount = 0
-)
+var input aocutil.ProcessedInput
 
-func Part1(puzzleInput string) int {
-	processInput(puzzleInput)
+func Part1(puzzleInput string) (solution int) {
+	aocutil.ProcessInput(puzzleInput, &input)
 
-	fmt.Printf("%d - %d\n", lineCount, charCount)
+	fmt.Printf("%d - %d\n", input.LineCount, input.CharCount)
 
-	return 0
+	return solution
 }
 
-func Part2(puzzleInput string) int {
-	processInput(puzzleInput)
+func Part2(puzzleInput string) (solution int) {
+	aocutil.ProcessInput(puzzleInput, &input)
 
-	fmt.Printf("%d - %d\n", lineCount, charCount)
+	fmt.Printf("%d - %d\n", input.LineCount, input.CharCount)
 
-	return 0
-}
-
-func processInput(puzzleInput string) {
-	if len(lines) != 0 {
-		fmt.Println("Input already processed.")
-		return
-	}
-
-	scanner := bufio.NewScanner(strings.NewReader(puzzleInput))
-	for scanner.Scan() {
-		line := scanner.Text()
-		lines = append(lines, line)
-	}
-
-	lineCount = len(lines)
-	charCount = len(lines[0])
+	return solution
 }

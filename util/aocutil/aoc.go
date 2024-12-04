@@ -1,12 +1,36 @@
-package util
+package aocutil
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os"
 	"regexp"
+	"strings"
 	"time"
 )
+
+type ProcessedInput struct {
+	Lines     []string
+	LineCount int
+	CharCount int // length of the first line - use with care
+}
+
+func ProcessInput(puzzleInput string, pi *ProcessedInput) {
+	if len(pi.Lines) != 0 {
+		fmt.Println("Input already processed.")
+		return
+	}
+
+	scanner := bufio.NewScanner(strings.NewReader(puzzleInput))
+	for scanner.Scan() {
+		line := scanner.Text()
+		pi.Lines = append(pi.Lines, line)
+	}
+
+	pi.LineCount = len(pi.Lines)
+	pi.CharCount = len(pi.Lines[0])
+}
 
 func Solve(solution any, duration time.Duration, name string, dir string) {
 	path := dir + "solution.txt"

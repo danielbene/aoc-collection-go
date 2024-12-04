@@ -17,6 +17,8 @@ tasks:
       - task: session_test
       - mkdir -p {{.SOLUTIONS_ROOT}}{{.YEAR}}/{{.DAY}}
       - cp skeleton/* {{.SOLUTIONS_ROOT}}{{.YEAR}}/{{.DAY}}
+      - cmd: git checkout -b day/{{.YEAR}}-{{.DAY}}
+        ignore_error: true
       - |
         curl "https://adventofcode.com/{{.YEAR}}/day/`echo {{.DAY}} | sed 's/^0*//'`/input" -H "cookie: session=${AOC_SESSION}" -o "{{.SOLUTIONS_ROOT}}{{.YEAR}}/{{.DAY}}/input.txt" 2>/dev/null
 
