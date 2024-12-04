@@ -32,22 +32,40 @@ func main() {
 
 // -----------------------------------------------------------
 
-func Part1(puzzleInput string) string {
-	scanner := bufio.NewScanner(strings.NewReader(puzzleInput))
-	for scanner.Scan() {
-		line := scanner.Text()
-		fmt.Println(line)
-	}
+var (
+	lines     []string
+	lineCount = 0
+	charCount = 0
+)
 
-	return "solution"
+func Part1(puzzleInput string) int {
+	processInput(puzzleInput)
+
+	fmt.Printf("%d - %d\n", lineCount, charCount)
+
+	return 0
 }
 
-func Part2(puzzleInput string) string {
+func Part2(puzzleInput string) int {
+	processInput(puzzleInput)
+
+	fmt.Printf("%d - %d\n", lineCount, charCount)
+
+	return 0
+}
+
+func processInput(puzzleInput string) {
+	if len(lines) != 0 {
+		fmt.Println("Input already processed.")
+		return
+	}
+
 	scanner := bufio.NewScanner(strings.NewReader(puzzleInput))
 	for scanner.Scan() {
 		line := scanner.Text()
-		fmt.Println(line)
+		lines = append(lines, line)
 	}
 
-	return "solution"
+	lineCount = len(lines)
+	charCount = len(lines[0])
 }

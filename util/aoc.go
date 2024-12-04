@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func Solve(solution string, duration time.Duration, name string, dir string) {
+func Solve(solution any, duration time.Duration, name string, dir string) {
 	path := dir + "solution.txt"
 	f, oErr := os.OpenFile(path, os.O_RDWR, 0644)
 	if oErr != nil {
@@ -24,13 +24,13 @@ func Solve(solution string, duration time.Duration, name string, dir string) {
 
 	if name == "Part1" {
 		m := regexp.MustCompile("Part1 solution:.*\n")
-		strContent = m.ReplaceAllString(strContent, fmt.Sprintf("Part1 solution: %s\n", solution))
+		strContent = m.ReplaceAllString(strContent, fmt.Sprintf("Part1 solution: %v\n", solution))
 
 		m = regexp.MustCompile("Part1 time:.*\n")
 		strContent = m.ReplaceAllString(strContent, fmt.Sprintf("Part1 time: %s\n", duration.String()))
 	} else {
 		m := regexp.MustCompile("Part2 solution:.*\n")
-		strContent = m.ReplaceAllString(strContent, fmt.Sprintf("Part2 solution: %s\n", solution))
+		strContent = m.ReplaceAllString(strContent, fmt.Sprintf("Part2 solution: %v\n", solution))
 
 		m = regexp.MustCompile("Part2 time:.*\n*")
 		strContent = m.ReplaceAllString(strContent, fmt.Sprintf("Part2 time: %s\n", duration.String()))
