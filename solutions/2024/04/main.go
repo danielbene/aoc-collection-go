@@ -42,18 +42,14 @@ func Part1(puzzleInput string) int {
 	processInput(puzzleInput)
 	count := 0
 
-	diagCnt := 0
 	for currentLineId, line := range lines {
 		horizontal(&count, &line)
 		for idx, ch := range line {
 			if ch == 'X' || ch == 'S' {
-				vertical(&count, currentLineId, idx, ch, lines, lineCount)
-				diagonal(&diagCnt, currentLineId, idx, ch, lines, lineCount, charCount)
+				diagonal(&count, currentLineId, idx, ch)
 			}
 		}
 	}
-
-	count += diagCnt / 2 // counted to and from so the value must be halved
 
 	return count
 }
@@ -67,7 +63,7 @@ func Part2(puzzleInput string) int {
 			for idx, ch := range line {
 				if idx > 0 && idx < charCount-1 {
 					if ch == 'A' {
-						if checkWings(currentLineId, idx, lines) {
+						if checkWings(currentLineId, idx) {
 							count++
 						}
 					}
@@ -95,7 +91,7 @@ func processInput(puzzleInput string) {
 	charCount = len(lines[0])
 }
 
-func checkWings(currentLineId int, currentCharId int, lines []string) bool {
+func checkWings(currentLineId int, currentCharId int) bool {
 	leftUp := lines[currentLineId-1][currentCharId-1]
 	leftDown := lines[currentLineId+1][currentCharId-1]
 	rightUp := lines[currentLineId-1][currentCharId+1]
@@ -110,7 +106,7 @@ func checkWings(currentLineId int, currentCharId int, lines []string) bool {
 	return false
 }
 
-func diagonal(count *int, currentLineId int, currentCharId int, firstRune rune, lines []string, lineCount int, charCount int) {
+func diagonal(count *int, currentLineId int, currentCharId int, firstRune rune) {
 	var target string
 	if firstRune == 'X' {
 		target = "MAS"
@@ -118,32 +114,23 @@ func diagonal(count *int, currentLineId int, currentCharId int, firstRune rune, 
 		target = "AMX"
 	}
 
-	leftUp, leftDown, rightUp, rightDown := 1, 1, 1, 1
+	// NOTE: rightUp and leftUp does not needed because we checking both ways
+	verti, leftDown, rightDown := 1, 1, 1
 	for i, req := range target {
-		// left-up
-		row := currentLineId - i - 1
-		col := currentCharId - i - 1
-		if leftUp == 1 {
-			if !(row >= 0 && col >= 0) || rune(lines[row][col]) != req {
-				leftUp = 0
+		// vertical
+		if verti == 1 {
+			targetLineId := currentLineId + i + 1
+			if targetLineId >= lineCount || rune(lines[targetLineId][currentCharId]) != req {
+				verti = 0
 			}
 		}
 
 		// left-down
-		row = currentLineId + i + 1
-		col = currentCharId - i - 1
+		row := currentLineId + i + 1
+		col := currentCharId - i - 1
 		if leftDown == 1 {
 			if !(row < lineCount && col >= 0) || rune(lines[row][col]) != req {
 				leftDown = 0
-			}
-		}
-
-		// right-up
-		row = currentLineId - i - 1
-		col = currentCharId + i + 1
-		if rightUp == 1 {
-			if !(row >= 0 && col < charCount) || rune(lines[row][col]) != req {
-				rightUp = 0
 			}
 		}
 
@@ -157,31 +144,10 @@ func diagonal(count *int, currentLineId int, currentCharId int, firstRune rune, 
 		}
 	}
 
-	*count += leftUp + leftDown + rightUp + rightDown
+	*count += verti + leftDown + rightDown
 }
 
 func horizontal(count *int, line *string) {
 	*count += strings.Count(*line, "XMAS")
 	*count += strings.Count(*line, "SAMX")
-}
-
-func vertical(count *int, currentLineId int, currentCharId int, firstRune rune, lines []string, lineCount int) {
-	var target string
-	if firstRune == 'X' {
-		target = "MAS"
-	} else {
-		target = "AMX"
-	}
-
-	for i, req := range target {
-		if currentLineId+i+1 >= lineCount {
-			return
-		}
-
-		if rune(lines[currentLineId+i+1][currentCharId]) != req {
-			return
-		}
-	}
-
-	*count++
 }
