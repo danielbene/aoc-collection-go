@@ -1,6 +1,5 @@
 Part1 solution: 535078
-Part1 time: 1.823102ms
+Part1 time: 1.772098ms
 
 Part2 solution: 75312571
-Part2 time: 2.369583ms
-
+Part2 time: 2.780514ms

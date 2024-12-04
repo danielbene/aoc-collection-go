@@ -6,7 +6,6 @@ import (
 	_ "embed"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -40,7 +39,7 @@ const (
 	samx = "SAMX"
 )
 
-func Part1(puzzleInput string) string {
+func Part1(puzzleInput string) int {
 	var (
 		lines     []string
 		count     = 0
@@ -70,7 +69,7 @@ func Part1(puzzleInput string) string {
 
 	count += diagCnt / 2 // counted to and from so we have to halve the value
 
-	return strconv.Itoa(count)
+	return count
 }
 
 func diagonal(count *int, currentLineId int, currentCharId int, firstRune rune, lines []string, lineCount int, charCount int) {
@@ -163,7 +162,7 @@ func vertical(count *int, currentLineId int, currentCharId int, firstRune rune, 
 	*count++
 }
 
-func Part2(puzzleInput string) string {
+func Part2(puzzleInput string) int {
 	var (
 		lines     []string
 		count     = 0
@@ -194,7 +193,7 @@ func Part2(puzzleInput string) string {
 		}
 	}
 
-	return strconv.Itoa(count)
+	return count
 }
 
 func checkWings(currentLineId int, currentCharId int, lines []string) bool {

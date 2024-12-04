@@ -32,22 +32,22 @@ func main() {
 
 // -----------------------------------------------------------
 
-func Part1(puzzleInput string) string {
+func Part1(puzzleInput string) int {
 	scanner := bufio.NewScanner(strings.NewReader(puzzleInput))
 	for scanner.Scan() {
 		line := scanner.Text()
 		fmt.Println(line)
 	}
 
-	return "solution"
+	return 0
 }
 
-func Part2(puzzleInput string) string {
+func Part2(puzzleInput string) int {
 	scanner := bufio.NewScanner(strings.NewReader(puzzleInput))
 	for scanner.Scan() {
 		line := scanner.Text()
 		fmt.Println(line)
 	}
 
-	return "solution"
+	return 0
 }
