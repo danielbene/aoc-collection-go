@@ -2,6 +2,7 @@ package main
 
 import (
 	"aoc/util"
+	"aoc/util/sliceutil"
 	"bufio"
 	_ "embed"
 	"fmt"
@@ -63,7 +64,7 @@ func Part2(puzzleInput string) string {
 				tolerated := make([]string, len(parts))
 
 				copy(tolerated, parts)
-				tolerated = util.RemoveSliceElement(tolerated, i)
+				tolerated = sliceutil.RemoveSliceElement(tolerated, i)
 
 				isLevelSafe = checkLevels(tolerated)
 				if isLevelSafe {
