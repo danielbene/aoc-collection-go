@@ -1,7 +1,7 @@
 package main
 
 import (
-	"aoc/util"
+	"aoc/util/aocutil"
 	"aoc/util/sliceutil"
 	_ "embed"
 	"fmt"
@@ -24,20 +24,20 @@ func main() {
 	if os.Args[1] == "1" {
 		fmt.Println("running part1")
 		p1 := Part1(inputFile)
-		util.Solve(p1, time.Since(start), "Part1", os.Args[2])
+		aocutil.Solve(p1, time.Since(start), "Part1", os.Args[2])
 	} else {
 		fmt.Println("running part2")
 		p2 := Part2(inputFile)
-		util.Solve(p2, time.Since(start), "Part2", os.Args[2])
+		aocutil.Solve(p2, time.Since(start), "Part2", os.Args[2])
 	}
 }
 
 // -----------------------------------------------------------
 
-var input util.ProcessedInput
+var input aocutil.ProcessedInput
 
 func Part1(puzzleInput string) (solution int) {
-	util.ProcessInput(puzzleInput, &input)
+	aocutil.ProcessInput(puzzleInput, &input)
 
 	for _, line := range input.Lines {
 		parts := strings.Split(line, ": ")
@@ -65,7 +65,7 @@ func Part1(puzzleInput string) (solution int) {
 }
 
 func Part2(puzzleInput string) (solution int) {
-	util.ProcessInput(puzzleInput, &input)
+	aocutil.ProcessInput(puzzleInput, &input)
 	copies := make(map[int]int) // cardId : numOfCopies
 
 	for currentLineId, line := range input.Lines {

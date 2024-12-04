@@ -1,4 +1,4 @@
-package util
+package aocutil
 
 import (
 	"bufio"
