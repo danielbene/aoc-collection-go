@@ -1,6 +1,7 @@
 package main
 
 import (
+	"aoc/util"
 	"aoc/util/aocutil"
 	_ "embed"
 	"fmt"
@@ -8,7 +9,10 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
+
+	"github.com/briandowns/spinner"
 )
 
 //go:embed input.txt
@@ -98,37 +102,73 @@ func Part1(puzzleInput string) (solution int) {
 	return solution
 }
 
+// probably there is a more optimal / mathematical solution for this
 func Part2(puzzleInput string) (solution int) {
+	defer util.TrackTime(time.Now(), "Minimal seed-to-location")
+
 	inputParts := strings.Split(puzzleInput, "\n\n")
+	solution = math.MaxInt
 	populate(inputParts)
 
-	solution = math.MaxInt
-	for i := 0; i < len(seeds); i += 2 {
-		for seed := seeds[i]; seed < seeds[i]+seeds[i+1]; seed++ {
-			track := seed
+	chanLocations := make(chan int, 200)
+	pathCount := 0
+	var wg sync.WaitGroup
 
-			for i := 1; i <= len(sections); i++ {
-				section := sections[i]
+	go func() {
+		s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
+		s.Start()
+		s.Suffix = " 0"
 
-				found := 0
-				for _, mapping := range *section.Right {
-					if track >= mapping[1] && track <= mapping[1]+mapping[2] {
-						found = mapping[0] + (track - mapping[1])
-						break
-					}
+		for {
+			time.Sleep(1 * time.Second)
+			s.Suffix = fmt.Sprintf(" solution: %d - counter: %d", solution, pathCount)
+		}
+	}()
+
+	go func() {
+		for {
+			select {
+			case res := <-chanLocations:
+				pathCount++
+				if solution > res {
+					solution = res
 				}
-
-				if found != 0 {
-					track = found
-				}
-
-			}
-
-			if solution > track {
-				solution = track
 			}
 		}
+	}()
+
+	for i := 0; i < len(seeds); i += 2 {
+		wg.Add(1)
+		go func() {
+			for seed := seeds[i]; seed < seeds[i]+seeds[i+1]; seed++ {
+				track := seed
+
+				for i := 1; i <= len(sections); i++ {
+					section := sections[i]
+
+					found := 0
+					for _, mapping := range *section.Right {
+						if track >= mapping[1] && track <= mapping[1]+mapping[2] {
+							found = mapping[0] + (track - mapping[1])
+							break
+						}
+					}
+
+					if found != 0 {
+						track = found
+					}
+
+				}
+
+				chanLocations <- track
+			}
+
+			wg.Done()
+		}()
 	}
+
+	wg.Wait()
+	time.Sleep(1 * time.Second)
 
 	return solution
 }
