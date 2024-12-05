@@ -2,7 +2,6 @@ package main
 
 import (
 	"aoc/util/aocutil"
-	"aoc/util/pairutil"
 	_ "embed"
 	"fmt"
 	"math"
@@ -36,21 +35,26 @@ func main() {
 
 var input aocutil.ProcessedInput
 
+type Pair struct {
+	Left  string
+	Right *[][]int
+}
+
 func Part1(puzzleInput string) (solution int) {
 	inputParts := strings.Split(puzzleInput, "\n\n")
 
 	var (
 		seeds                 []int
-		seedToSoil            pairutil.Pairs
-		soilToFertilizer      pairutil.Pairs
-		fertilizerToWater     pairutil.Pairs
-		waterToLight          pairutil.Pairs
-		lightToTemperature    pairutil.Pairs
-		temperatureToHumidity pairutil.Pairs
-		humidityToLocation    pairutil.Pairs
+		seedToSoil            [][]int
+		soilToFertilizer      [][]int
+		fertilizerToWater     [][]int
+		waterToLight          [][]int
+		lightToTemperature    [][]int
+		temperatureToHumidity [][]int
+		humidityToLocation    [][]int
 	)
 
-	var sections = map[int]pairutil.Pair{
+	var sections = map[int]Pair{
 		1: {Left: "seed-to-soil map:\n", Right: &seedToSoil},
 		2: {Left: "soil-to-fertilizer map:\n", Right: &soilToFertilizer},
 		3: {Left: "fertilizer-to-water map:\n", Right: &fertilizerToWater},
@@ -69,32 +73,40 @@ func Part1(puzzleInput string) (solution int) {
 		} else {
 			sectionMap := sections[i]
 			header := sectionMap.Left
-			pairs := sectionMap.Right
 
-			for _, line := range strings.Split(strings.Replace(part, header.(string), "", 1), "\n") {
+			var nums [][]int
+			for _, line := range strings.Split(strings.Replace(part, header, "", 1), "\n") {
 				parts := strings.Split(line, " ")
 				source, _ := strconv.Atoi(parts[1])
 				destination, _ := strconv.Atoi(parts[0])
 				rnge, _ := strconv.Atoi(parts[2])
 
-				for i := 0; i < rnge; i++ {
-					// OMFG
-					(pairs.(*pairutil.Pairs)).Pairs = append((pairs.(*pairutil.Pairs)).Pairs, pairutil.Pair{Left: source + i, Right: destination + i})
-				}
+				nums = append(nums, []int{destination, source, rnge})
 			}
+			sections[i] = Pair{Left: header, Right: &nums}
 		}
 	}
 
 	solution = math.MaxInt
 	for _, seed := range seeds {
 		track := seed
+
+		// following the track in each section
 		for i := 1; i <= len(sections); i++ {
 			section := sections[i]
-			tmp, found := (section.Right.(*pairutil.Pairs)).GetFirstByLeft(track)
+
+			found := 0
+			for _, mapping := range *section.Right {
+				// if the searched number is between source and source+range we found a mapping
+				if track >= mapping[1] && track <= mapping[1]+mapping[2] {
+					// getting the mapping destination with the diff
+					found = mapping[0] + (track - mapping[1])
+				}
+			}
 
 			// if its not found than its unmapped - we can keep the current value
-			if found {
-				track = tmp.(int)
+			if found != 0 {
+				track = found
 			}
 		}
 
