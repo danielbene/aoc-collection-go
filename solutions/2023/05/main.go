@@ -37,8 +37,6 @@ func main() {
 
 // -----------------------------------------------------------
 
-var input aocutil.ProcessedInput
-
 type Pair struct {
 	Left  string
 	Right *[][]int
@@ -157,7 +155,6 @@ func Part2(puzzleInput string) (solution int) {
 					if found != 0 {
 						track = found
 					}
-
 				}
 
 				chanLocations <- track
