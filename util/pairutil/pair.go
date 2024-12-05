@@ -4,6 +4,8 @@ type Pairs struct {
 	Pairs []Pair
 }
 
+// NOTE: probably better to use a specific implementation
+// for the task with well defined types
 type Pair struct {
 	Left  any
 	Right any
