@@ -104,9 +104,7 @@ func Part2(puzzleInput string) (solution int) {
 
 	solution = math.MaxInt
 	for i := 0; i < len(seeds); i += 2 {
-		//for _, seed := range seeds {
-		for seed := seeds[i]; seed <= seeds[i]+seeds[i+1]; seed++ {
-			fmt.Println(seed)
+		for seed := seeds[i]; seed < seeds[i]+seeds[i+1]; seed++ {
 			track := seed
 
 			for i := 1; i <= len(sections); i++ {
@@ -116,12 +114,14 @@ func Part2(puzzleInput string) (solution int) {
 				for _, mapping := range *section.Right {
 					if track >= mapping[1] && track <= mapping[1]+mapping[2] {
 						found = mapping[0] + (track - mapping[1])
+						break
 					}
 				}
 
 				if found != 0 {
 					track = found
 				}
+
 			}
 
 			if solution > track {
