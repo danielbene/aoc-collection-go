@@ -27,7 +27,7 @@ func GetCommonSliceElements(left []string, right []string) (commonElements []str
 		}
 	}
 
-	return
+	return commonElements
 }
 
 func IntContainsElement(slice []int, target int) (contains bool, idx int) {
