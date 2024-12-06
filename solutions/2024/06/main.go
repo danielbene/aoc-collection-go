@@ -177,7 +177,7 @@ func Part2(puzzleInput string) (solution int) {
 
 			loopCount++
 
-			// assuming it is a loop if more than 10K moves happend
+			// assuming it is a loop if more than X moves happend
 			if loopCount > 10000 {
 				solution++
 				break
@@ -196,5 +196,8 @@ func Part2(puzzleInput string) (solution int) {
 		}
 	}
 
-	return solution - 1 // mystery -1, it is what it is
+	// mystery -1, it is what it is
+	// tmp input solution is 1789 - its fine without -1...
+	// my input solution is 1586 - the code returns with one more
+	return solution - 1
 }
