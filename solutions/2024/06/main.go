@@ -41,19 +41,7 @@ type Coord struct {
 
 func Part1(puzzleInput string) (solution int) {
 	aocutil.ProcessInput(puzzleInput, &input)
-	mtx := make([][]string, input.LineCount)
-
-	pos := Coord{X: 0, Y: 0}
-	for idx, line := range input.Lines {
-		for i, ch := range line {
-			mtx[idx] = append(mtx[idx], string(ch))
-			if string(ch) == "^" {
-				pos.X = i
-				pos.Y = idx
-				pos.Orientation = "^"
-			}
-		}
-	}
+	mtx, pos := getMatrixAndPos()
 
 	for {
 		if pos.Y-1 < 0 || pos.Y+1 >= input.LineCount ||
@@ -110,94 +98,104 @@ func Part1(puzzleInput string) (solution int) {
 
 func Part2(puzzleInput string) (solution int) {
 	aocutil.ProcessInput(puzzleInput, &input)
-	mtx := make([][]string, input.LineCount)
+	mtx, currGuardPos := getMatrixAndPos()
 
-	pos := Coord{X: 0, Y: 0}
-	for idx, line := range input.Lines {
-		for i, ch := range line {
-			mtx[idx] = append(mtx[idx], string(ch))
-			if string(ch) == "^" {
-				pos.X = i
-				pos.Y = idx
-				pos.Orientation = "^"
-
-				mtx[idx][i] = "."
-			}
-
-		}
+	startGuardPos := Coord{
+		X:           currGuardPos.X,
+		Y:           currGuardPos.Y,
+		Orientation: currGuardPos.Orientation,
 	}
 
-	origPos := Coord{
-		X:           pos.X,
-		Y:           pos.Y,
-		Orientation: pos.Orientation,
-	}
-
-	updated := Coord{X: 0, Y: 0}
+	testBlockCoord := Coord{X: 0, Y: 0}
 	origChar := ""
 
+	// basically
 	for {
-		pos = origPos
-		origChar = mtx[updated.Y][updated.X]
-		mtx[updated.Y][updated.X] = "#"
+		currGuardPos = startGuardPos
+
+		origChar = mtx[testBlockCoord.Y][testBlockCoord.X]
+		mtx[testBlockCoord.Y][testBlockCoord.X] = "#"
 
 		loopCount := 0
 		for {
-			if pos.Y-1 < 0 || pos.Y+1 >= input.LineCount ||
-				pos.X-1 < 0 || pos.X+1 >= input.CharCount {
+			if currGuardPos.Y-1 < 0 || currGuardPos.Y+1 >= input.LineCount ||
+				currGuardPos.X-1 < 0 || currGuardPos.X+1 >= input.CharCount {
 				break
 			}
 
-			switch pos.Orientation {
+			switch currGuardPos.Orientation {
 			case "^":
-				if mtx[pos.Y-1][pos.X] != "#" {
-					pos.Y--
+				if mtx[currGuardPos.Y-1][currGuardPos.X] != "#" {
+					currGuardPos.Y--
 				} else {
-					pos.Orientation = ">"
+					currGuardPos.Orientation = ">"
 				}
 			case ">":
-				if mtx[pos.Y][pos.X+1] != "#" {
-					pos.X++
+				if mtx[currGuardPos.Y][currGuardPos.X+1] != "#" {
+					currGuardPos.X++
 				} else {
-					pos.Orientation = "ˇ"
+					currGuardPos.Orientation = "ˇ"
 				}
 			case "ˇ":
-				if mtx[pos.Y+1][pos.X] != "#" {
-					pos.Y++
+				if mtx[currGuardPos.Y+1][currGuardPos.X] != "#" {
+					currGuardPos.Y++
 				} else {
-					pos.Orientation = "<"
+					currGuardPos.Orientation = "<"
 				}
 			case "<":
-				if mtx[pos.Y][pos.X-1] != "#" {
-					pos.X--
+				if mtx[currGuardPos.Y][currGuardPos.X-1] != "#" {
+					currGuardPos.X--
 				} else {
-					pos.Orientation = "^"
+					currGuardPos.Orientation = "^"
 				}
 			}
 
 			loopCount++
 
 			// assuming it is a loop if more than X moves happend
-			if loopCount > 10000 {
+			if loopCount > 100000 {
 				solution++
 				break
 			}
 		}
 
-		mtx[updated.Y][updated.X] = origChar
+		mtx[testBlockCoord.Y][testBlockCoord.X] = origChar
 
-		if updated.X+1 < input.CharCount {
-			updated.X++
-		} else if updated.Y+1 < input.LineCount {
-			updated.Y++
-			updated.X = 0
+		if testBlockCoord.X+1 < input.CharCount {
+			testBlockCoord.X++
+
+			// cannot block starting position
+			if testBlockCoord.Y == startGuardPos.Y && testBlockCoord.X == startGuardPos.X {
+				testBlockCoord.X++
+			}
+		} else if testBlockCoord.Y+1 < input.LineCount {
+			testBlockCoord.Y++
+			testBlockCoord.X = 0
 		} else {
 			break
 		}
 	}
 
-	// mystery -1, it is what it is
-	// tmp input solution is 1789 - its fine without -1...
-	// my input solution is 1586 - the code returns with one more
-	return solution - 1
+	// secondary input solution should be 1789
+	return solution
+}
+
+func getMatrixAndPos() ([][]string, Coord) {
+	mtx := make([][]string, input.LineCount)
+
+	startGuardPos := Coord{X: 0, Y: 0}
+	for idx, line := range input.Lines {
+		for i, ch := range line {
+			mtx[idx] = append(mtx[idx], string(ch))
+			if string(ch) == "^" {
+				startGuardPos.X = i
+				startGuardPos.Y = idx
+				startGuardPos.Orientation = "^"
+
+				mtx[idx][i] = "."
+			}
+		}
+	}
+
+	return mtx, startGuardPos
 }
