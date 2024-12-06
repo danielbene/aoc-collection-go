@@ -109,7 +109,7 @@ func Part2(puzzleInput string) (solution int) {
 	testBlockCoord := Coord{X: 0, Y: 0}
 	origChar := ""
 
-	// basically
+	// basically testing each coord with a temporary block and trying to find loops
 	for {
 		currGuardPos = startGuardPos
 
