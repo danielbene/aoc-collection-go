@@ -7,6 +7,7 @@ toolchain go1.23.3
 require (
 	github.com/briandowns/spinner v1.23.1
 	github.com/divan/num2words v1.0.1
+	gonum.org/v1/gonum v0.15.1
 )
 
 require (
