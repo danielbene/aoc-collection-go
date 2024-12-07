@@ -38,45 +38,15 @@ var input aocutil.ProcessedInput
 
 func Part1(puzzleInput string) (solution int) {
 	aocutil.ProcessInput(puzzleInput, &input)
-
-	for _, line := range input.Lines {
-		parts := strings.Split(line, ": ")
-		tValue, _ := strconv.Atoi(parts[0])
-		operands := strings.Split(string(parts[1]), " ")
-
-		setup := []int{}
-		for i := 0; i < len(operands)-1; i++ {
-			setup = append(setup, 2)
-		}
-
-		comb := combin.Cartesian(setup)
-		for _, c := range comb {
-			row := ""
-			for i, o := range operands {
-				row += o
-
-				if i < len(c) {
-					if c[i] == 0 {
-						row += "+"
-					} else {
-						row += "*"
-					}
-				}
-			}
-
-			if calc(row) == tValue {
-				solution += tValue
-				break
-			}
-		}
-	}
-
-	return solution
+	return combine(2)
 }
 
 func Part2(puzzleInput string) (solution int) {
 	aocutil.ProcessInput(puzzleInput, &input)
+	return combine(3)
+}
 
+func combine(opCount int) (solution int) {
 	for _, line := range input.Lines {
 		parts := strings.Split(line, ": ")
 		tValue, _ := strconv.Atoi(parts[0])
@@ -84,27 +54,27 @@ func Part2(puzzleInput string) (solution int) {
 
 		setup := []int{}
 		for i := 0; i < len(operands)-1; i++ {
-			setup = append(setup, 3)
+			setup = append(setup, opCount)
 		}
 
 		comb := combin.Cartesian(setup)
 		for _, c := range comb {
-			row := ""
-			for i, o := range operands {
-				row += o
+			var row strings.Builder
+			for i, op := range operands {
+				row.WriteString(op)
 
 				if i < len(c) {
 					if c[i] == 0 {
-						row += "+"
+						row.WriteString("+")
 					} else if c[i] == 1 {
-						row += "*"
+						row.WriteString("*")
 					} else {
-						row += "@"
+						row.WriteString("@") // using @ instead of ||
 					}
 				}
 			}
 
-			if calc(row) == tValue {
+			if calculateRow(row.String()) == tValue {
 				solution += tValue
 				break
 			}
@@ -115,7 +85,7 @@ func Part2(puzzleInput string) (solution int) {
 }
 
 // always left-to-right
-func calc(inp string) int {
+func calculateRow(inp string) int {
 	var operators []rune
 	numStrs := strings.FieldsFunc(inp, func(r rune) bool {
 		if r == '+' || r == '*' || r == '@' {
@@ -139,7 +109,6 @@ func calc(inp string) int {
 		} else if op == '*' {
 			sum *= a
 		} else if op == '@' {
-			// using @ instead of ||
 			sum, _ = strconv.Atoi(fmt.Sprintf("%d%s", sum, numStrs[idx+1]))
 		}
 	}
