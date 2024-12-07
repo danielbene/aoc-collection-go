@@ -57,6 +57,7 @@ func combine(opCount int) (solution int) {
 			setup = append(setup, opCount)
 		}
 
+		// opCount modify the cartesian combination to use 0,1 or 0,1,2 numbers
 		comb := combin.Cartesian(setup)
 		for _, c := range comb {
 			var row strings.Builder
@@ -84,7 +85,7 @@ func combine(opCount int) (solution int) {
 	return solution
 }
 
-// always left-to-right
+// ALWAYS left-to-right
 func calculateRow(inp string) int {
 	var operators []rune
 	numStrs := strings.FieldsFunc(inp, func(r rune) bool {
