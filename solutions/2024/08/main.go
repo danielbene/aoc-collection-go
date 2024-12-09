@@ -75,7 +75,12 @@ func Part2(puzzleInput string) (solution int) {
 				for y2, line2 := range input.Lines {
 					for x2, ch2 := range line2 {
 						if ch2 == ch && !(y == y2 && x == x2) {
-							coords = append(coords, getAntinodes(x, y, x2, y2)...)
+							newCoords := getDiagonalAntinodes(x, y, x2, y2)
+							for _, c := range newCoords {
+								if !slices.Contains(coords, c) {
+									coords = append(coords, c)
+								}
+							}
 						}
 					}
 				}
@@ -86,27 +91,23 @@ func Part2(puzzleInput string) (solution int) {
 	return len(coords)
 }
 
-func getAntinodes(x int, y int, x2 int, y2 int) []string {
-	var coords []string
+func getDiagonalAntinodes(x int, y int, x2 int, y2 int) (coords []string) {
+	// going far in each direction to make sure
+	cnt := input.CharCount * -1
+	for {
+		if cnt > input.CharCount {
+			break
+		}
 
-	c := fmt.Sprintf("%d,%d", x, y)
-	if !slices.Contains(coords, c) {
-		coords = append(coords, c)
-	}
+		// this way we can search diagonally multiple steps
+		antiX := x - ((x2 - x) * cnt)
+		antiY := y - ((y2 - y) * cnt)
 
-	c = fmt.Sprintf("%d,%d", x2, y2)
-	if !slices.Contains(coords, c) {
-		coords = append(coords, c)
-	}
-
-	antiX := x - (x2 - x)
-	antiY := y - (y2 - y)
-
-	if antiX >= 0 && antiY >= 0 && antiX < input.CharCount && antiY < input.LineCount {
-		c := fmt.Sprintf("%d,%d", antiX, antiY)
-		if !slices.Contains(coords, c) {
+		if antiX >= 0 && antiY >= 0 && antiX < input.CharCount && antiY < input.LineCount {
 			coords = append(coords, fmt.Sprintf("%d,%d", antiX, antiY))
 		}
+
+		cnt++
 	}
 
 	return coords
