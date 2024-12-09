@@ -1,0 +1,6 @@
+Part1 solution: 6301895872542
+Part1 time: 4.04397738s
+
+Part2 solution: 6323761685944
+Part2 time: 3.334428161s
+
