@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 	"time"
 )
@@ -36,23 +37,22 @@ var input aocutil.ProcessedInput
 func Part1(puzzleInput string) (solution int) {
 	aocutil.ProcessInput(puzzleInput, &input)
 
-	// boooyah
+	// booooyah
+	var coords []string
 	for y, line := range input.Lines {
 		for x, ch := range line {
-			if rune(ch) != '.' {
+			if ch != '.' {
 				for y2, line2 := range input.Lines {
 					for x2, ch2 := range line2 {
-						if ch2 == ch && (y != y2 || x != x2) {
+						if ch2 == ch && !(y == y2 && x == x2) {
 							antiX := x - (x2 - x)
 							antiY := y - (y2 - y)
 
-							fmt.Printf("orig: %d %d secondary: %d %d anti: %d %d rune: %s\n", x, y, x2, y2, antiX, antiY, string(ch))
-							if antiX >= 0 && antiY >= 0 &&
-								antiX < input.CharCount && antiY < input.LineCount &&
-								input.Lines[antiY][antiX] == '.' {
-								//fmt.Printf("orig: %d %d secondary: %d %d anti: %d %d rune: %s target: %s\n", x, y, x2, y2, antiX, antiY, string(ch), string(input.Lines[antiY][antiX]))
-								fmt.Println("ok")
-								solution++
+							if antiX >= 0 && antiY >= 0 && antiX < input.CharCount && antiY < input.LineCount {
+								c := fmt.Sprintf("%d,%d", antiX, antiY)
+								if !slices.Contains(coords, c) {
+									coords = append(coords, fmt.Sprintf("%d,%d", antiX, antiY))
+								}
 							}
 						}
 					}
@@ -61,7 +61,7 @@ func Part1(puzzleInput string) (solution int) {
 		}
 	}
 
-	return solution
+	return len(coords)
 }
 
 func Part2(puzzleInput string) (solution int) {
