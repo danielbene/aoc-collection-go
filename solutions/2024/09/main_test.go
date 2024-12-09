@@ -24,10 +24,8 @@ func Test_part1(t *testing.T) {
 
 // ---------------------------------------------------------
 
-var solutionP2 = 0
-var exampleP2 = `asd
-qwe
-fgh`
+var solutionP2 = 2858
+var exampleP2 = `2333133121414131402`
 
 func Test_part2(t *testing.T) {
 	if solutionP2 == 0 {

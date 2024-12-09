@@ -64,7 +64,7 @@ func Part2(puzzleInput string) string {
 				tolerated := make([]string, len(parts))
 
 				copy(tolerated, parts)
-				tolerated = sliceutil.RemoveSliceElement(tolerated, i)
+				tolerated = sliceutil.RemoveStringSliceElement(tolerated, i)
 
 				isLevelSafe = checkLevels(tolerated)
 				if isLevelSafe {

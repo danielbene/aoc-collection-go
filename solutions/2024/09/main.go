@@ -2,6 +2,7 @@ package main
 
 import (
 	"aoc/util/aocutil"
+	"aoc/util/sliceutil"
 	_ "embed"
 	"fmt"
 	"os"
@@ -37,60 +38,52 @@ var input aocutil.ProcessedInput
 func Part1(puzzleInput string) (solution int) {
 	aocutil.ProcessInput(puzzleInput, &input)
 
-	var diskLayout strings.Builder
+	var diskLayout []int
 
 	blockId := 0
 	for _, line := range input.Lines {
 		for idx, ch := range line {
 			num, _ := strconv.Atoi(string(ch))
 			if idx%2 == 0 {
-				//block
 				for i := 0; i < num; i++ {
-					diskLayout.WriteString(strconv.Itoa(blockId))
+					diskLayout = append(diskLayout, blockId)
 				}
 
 				blockId++
 			} else {
 				for i := 0; i < num; i++ {
-					diskLayout.WriteString(".")
+					diskLayout = append(diskLayout, -1) // using -1 as point
 				}
 			}
 		}
 	}
 
-	fmt.Println(diskLayout.String())
-
-	ordered := []rune(diskLayout.String())
+	ordered := diskLayout
 	for i := len(ordered) - 1; i >= 0; i-- {
-		if ordered[i] == '.' {
+		if ordered[i] == -1 {
 			continue
 		}
 
 		for j := 0; j < len(ordered); j++ {
 			if j > i {
+				// if forward index reaches backward we should stop
 				break
 			}
 
-			if ordered[j] == '.' {
+			if ordered[j] == -1 {
 				ordered[j], ordered[i] = ordered[i], ordered[j]
 			}
 		}
 
 	}
 
-	for idx, ch := range ordered {
-		if ch == '.' {
-			return
+	for idx, num := range ordered {
+		if num == -1 {
+			break
 		}
-
-		num, _ := strconv.Atoi(string(ch))
-		fmt.Printf("%d * %d\n", idx, num)
 
 		solution += idx * num
 	}
-
-	//fmt.Println(diskLayout.String())
-	//fmt.Println(string(ordered))
 
 	return solution
 }
@@ -98,7 +91,75 @@ func Part1(puzzleInput string) (solution int) {
 func Part2(puzzleInput string) (solution int) {
 	aocutil.ProcessInput(puzzleInput, &input)
 
-	fmt.Printf("%d - %d\n", input.LineCount, input.CharCount)
+	var diskLayout []int
+
+	blockId := 0
+	for _, line := range input.Lines {
+		for idx, ch := range line {
+			num, _ := strconv.Atoi(string(ch))
+			if idx%2 == 0 {
+				var file []int
+				for i := 0; i < num; i++ {
+					file = append(file, blockId)
+					diskLayout = append(diskLayout, blockId)
+				}
+
+				blockId++
+			} else {
+				for i := 0; i < num; i++ {
+					diskLayout = append(diskLayout, -1) // using -1 as point
+				}
+			}
+		}
+	}
+
+	ordered := diskLayout
+	for i := len(ordered) - 1; i >= 0; i-- {
+		if ordered[i] == -1 {
+			continue
+		}
+
+		for j := 0; j < len(ordered); j++ {
+			if j > i {
+				// if forward index reaches backward we should stop
+				break
+			}
+
+			if ordered[j] == -1 {
+				// len num
+				// check forward
+
+				lenNum := len(strconv.Itoa(ordered[i]))
+
+				fits := true
+				for k := 0; k < lenNum; k++ {
+					if ordered[j+k] != -1 {
+						fits = false
+						break
+					}
+				}
+
+				if fits {
+					ordered[j], ordered[i] = ordered[i], ordered[j]
+
+					for k := 1; k < lenNum; k++ {
+						sliceutil.RemoveIntSliceElement(ordered, j+k)
+						ordered = append(ordered, -1)
+					}
+
+					fmt.Println(ordered)
+				}
+			}
+		}
+	}
+
+	for idx, num := range ordered {
+		if num == -1 {
+			break
+		}
+
+		solution += idx * num
+	}
 
 	return solution
 }
