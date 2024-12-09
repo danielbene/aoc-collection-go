@@ -59,26 +59,25 @@ func Part1(puzzleInput string) (solution int) {
 		}
 	}
 
-	ordered := diskLayout
-	for i := len(ordered) - 1; i >= 0; i-- {
-		if ordered[i] == -1 {
+	for i := len(diskLayout) - 1; i >= 0; i-- {
+		if diskLayout[i] == -1 {
 			continue
 		}
 
-		for j := 0; j < len(ordered); j++ {
+		for j := 0; j < len(diskLayout); j++ {
 			if j > i {
 				// if forward index reaches backward we should stop
 				break
 			}
 
-			if ordered[j] == -1 {
-				ordered[j], ordered[i] = ordered[i], ordered[j]
+			if diskLayout[j] == -1 {
+				diskLayout[j], diskLayout[i] = diskLayout[i], diskLayout[j]
 			}
-		}
 
+		}
 	}
 
-	for idx, num := range ordered {
+	for idx, num := range diskLayout {
 		if num == -1 {
 			break
 		}
@@ -115,13 +114,17 @@ func Part2(puzzleInput string) (solution int) {
 		}
 	}
 
+	// using index saving and goto label to avoid issues with slice element manipulation inside loop
+	saveIndex := len(diskLayout) - 1
+
 MAINLOOP:
-	fmt.Println(diskLayout)
-	for idxBackward := len(diskLayout) - 1; idxBackward >= 0; idxBackward-- {
+	// backward loop that searching for movable blocks
+	for idxBackward := saveIndex; idxBackward >= 0; idxBackward-- {
 		if diskLayout[idxBackward][0] == -1 {
 			continue
 		}
 
+		// forward loop that searching for free spaces
 		for idxForward := 0; idxForward < len(diskLayout); idxForward++ {
 			if idxForward > idxBackward {
 				// if forward index reaches backward we should stop
@@ -129,13 +132,10 @@ MAINLOOP:
 			}
 
 			if diskLayout[idxForward][0] == -1 {
-				// len num
-				// check forward
-
-				// TODO: handle idx > 9
 				lenNum := len(diskLayout[idxBackward])
-
 				fits := true
+
+				// free space found, check forward if there is enough space for the block
 				for k := 0; k < lenNum; k++ {
 					if diskLayout[idxForward+k][0] != -1 {
 						fits = false
@@ -144,70 +144,35 @@ MAINLOOP:
 				}
 
 				if fits {
-					fmt.Printf("%v - %v\n", diskLayout[idxForward], diskLayout[idxBackward])
+					// swap free space and file block
 					diskLayout[idxForward], diskLayout[idxBackward] = diskLayout[idxBackward], diskLayout[idxForward]
 
+					// move free space to the file block index while block elemnt count reached
 					for k := 1; k < lenNum; k++ {
-						diskLayout = slices.Insert(diskLayout, idxBackward+k, []int{-1})
-
-						//FIXME: something fishy
-						fmt.Printf("delete: %v\n", diskLayout[idxForward+k])
-						diskLayout = sliceutil.RemoveIntArrSliceElement(diskLayout, idxForward+k)
+						diskLayout = slices.Insert(diskLayout, idxBackward+1, []int{-1})
+						diskLayout = sliceutil.RemoveIntArrSliceElement(diskLayout, idxForward+1)
 					}
 
+					saveIndex = idxBackward - 1
 					goto MAINLOOP
 				}
 			}
 		}
 	}
 
-	/*ordered := diskLayout
-	for i := len(ordered) - 1; i >= 0; i-- {
-		if ordered[i] == -1 {
+	// TODO: add flatten to matrixutil
+	var flatten []int
+	for _, outArr := range diskLayout {
+		flatten = append(flatten, outArr...)
+	}
+
+	for idx, num := range flatten {
+		if num == -1 {
 			continue
 		}
 
-		for j := 0; j < len(ordered); j++ {
-			if j > i {
-				// if forward index reaches backward we should stop
-				break
-			}
-
-			if ordered[j] == -1 {
-				// len num
-				// check forward
-
-				lenNum := len(strconv.Itoa(ordered[i]))
-
-				fits := true
-				for k := 0; k < lenNum; k++ {
-					if ordered[j+k] != -1 {
-						fits = false
-						break
-					}
-				}
-
-				if fits {
-					ordered[j], ordered[i] = ordered[i], ordered[j]
-
-					for k := 1; k < lenNum; k++ {
-						sliceutil.RemoveIntSliceElement(ordered, j+k)
-						ordered = append(ordered, -1)
-					}
-
-					fmt.Println(ordered)
-				}
-			}
-		}
-	}
-
-	for idx, num := range ordered {
-		if num == -1 {
-			break
-		}
-
 		solution += idx * num
-	}*/
+	}
 
 	return solution
 }
