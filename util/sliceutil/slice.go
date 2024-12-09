@@ -7,7 +7,7 @@ func RemoveStringSliceElement(slice []string, idx int) []string {
 	return append(slice[:idx], slice[idx+1:]...)
 }
 
-func RemoveIntSliceElement(slice []int, idx int) []int {
+func RemoveIntArrSliceElement(slice [][]int, idx int) [][]int {
 	return append(slice[:idx], slice[idx+1:]...)
 }
 

@@ -6,6 +6,7 @@ import (
 	_ "embed"
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -91,7 +92,7 @@ func Part1(puzzleInput string) (solution int) {
 func Part2(puzzleInput string) (solution int) {
 	aocutil.ProcessInput(puzzleInput, &input)
 
-	var diskLayout []int
+	var diskLayout [][]int
 
 	blockId := 0
 	for _, line := range input.Lines {
@@ -101,19 +102,66 @@ func Part2(puzzleInput string) (solution int) {
 				var file []int
 				for i := 0; i < num; i++ {
 					file = append(file, blockId)
-					diskLayout = append(diskLayout, blockId)
 				}
+
+				diskLayout = append(diskLayout, file)
 
 				blockId++
 			} else {
 				for i := 0; i < num; i++ {
-					diskLayout = append(diskLayout, -1) // using -1 as point
+					diskLayout = append(diskLayout, []int{-1}) // using -1 as point
 				}
 			}
 		}
 	}
 
-	ordered := diskLayout
+MAINLOOP:
+	fmt.Println(diskLayout)
+	for idxBackward := len(diskLayout) - 1; idxBackward >= 0; idxBackward-- {
+		if diskLayout[idxBackward][0] == -1 {
+			continue
+		}
+
+		for idxForward := 0; idxForward < len(diskLayout); idxForward++ {
+			if idxForward > idxBackward {
+				// if forward index reaches backward we should stop
+				break
+			}
+
+			if diskLayout[idxForward][0] == -1 {
+				// len num
+				// check forward
+
+				// TODO: handle idx > 9
+				lenNum := len(diskLayout[idxBackward])
+
+				fits := true
+				for k := 0; k < lenNum; k++ {
+					if diskLayout[idxForward+k][0] != -1 {
+						fits = false
+						break
+					}
+				}
+
+				if fits {
+					fmt.Printf("%v - %v\n", diskLayout[idxForward], diskLayout[idxBackward])
+					diskLayout[idxForward], diskLayout[idxBackward] = diskLayout[idxBackward], diskLayout[idxForward]
+
+					for k := 1; k < lenNum; k++ {
+						diskLayout = slices.Insert(diskLayout, idxBackward+k, []int{-1})
+
+						//FIXME: something fishy
+						fmt.Printf("delete: %v\n", diskLayout[idxForward+k])
+						diskLayout = sliceutil.RemoveIntArrSliceElement(diskLayout, idxForward+k)
+					}
+
+					goto MAINLOOP
+				}
+			}
+		}
+	}
+
+	/*ordered := diskLayout
 	for i := len(ordered) - 1; i >= 0; i-- {
 		if ordered[i] == -1 {
 			continue
@@ -159,7 +207,7 @@ func Part2(puzzleInput string) (solution int) {
 		}
 
 		solution += idx * num
-	}
+	}*/
 
 	return solution
 }
