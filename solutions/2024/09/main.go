@@ -149,6 +149,7 @@ MAINLOOP:
 
 					// move free space to the file block index while block elemnt count reached
 					for k := 1; k < lenNum; k++ {
+						// using only +1 in the indexes because of the continous element removal
 						diskLayout = slices.Insert(diskLayout, idxBackward+1, []int{-1})
 						diskLayout = sliceutil.RemoveIntArrSliceElement(diskLayout, idxForward+1)
 					}
