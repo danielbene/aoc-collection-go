@@ -3,7 +3,11 @@ package sliceutil
 // ----------------------------- MODIFY -----------------------------
 
 // faster unordered solution: https://stackoverflow.com/a/37335777
-func RemoveSliceElement(slice []string, idx int) []string {
+func RemoveStringSliceElement(slice []string, idx int) []string {
+	return append(slice[:idx], slice[idx+1:]...)
+}
+
+func RemoveIntArrSliceElement(slice [][]int, idx int) [][]int {
 	return append(slice[:idx], slice[idx+1:]...)
 }
 
