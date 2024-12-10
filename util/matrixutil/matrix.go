@@ -1,13 +1,25 @@
 package matrixutil
 
-import "fmt"
+type Position struct {
+	X int
+	Y int
+}
 
-var matrix [][]string
+type Matrix[T any] struct {
+	Matrix          [][]T
+	CurrentPosition Position
+	Size            int
+}
 
-func SetDimensions(length int) {
-	matrix = make([][]string, length)
-	for i := range matrix {
-		//matrix[i] =
-		fmt.Println(i)
+// matrix.Matrix = make([][]string, length)
+// var matrix Matrix[string]
+
+func (mtx Matrix[T]) Move(x int, y int) (successful bool) {
+	if x < 0 || y < 0 || x >= mtx.Size || y >= mtx.Size {
+		return false
 	}
+
+	mtx.CurrentPosition.X = x
+	mtx.CurrentPosition.Y = y
+	return true
 }
