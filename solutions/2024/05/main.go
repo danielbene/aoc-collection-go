@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"slices"
 )
 
 //go:embed input.txt
@@ -108,8 +110,9 @@ func Part2(puzzleInput string) (solution int) {
 
 				rulesForNum := processedRules[intNums[j]]
 				for k := 0; k < j; k++ {
-					c, _ := sliceutil.IntContainsElement(rulesForNum, intNums[k])
-					if c {
+					// c, _ := sliceutil.IntContainsElement(rulesForNum, intNums[k])
+					c := slices.Index(rulesForNum, intNums[k])
+					if c != -1 {
 						sliceutil.SwapSliceElements(intNums, j, k)
 					}
 				}
