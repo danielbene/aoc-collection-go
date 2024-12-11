@@ -2,7 +2,7 @@ package main
 
 import (
 	"aoc/util/aocutil"
-	"aoc/util/sliceutil"
+	"aoc/util/matrixutil"
 	_ "embed"
 	"fmt"
 	"os"
@@ -151,7 +151,7 @@ MAINLOOP:
 					for k := 1; k < lenNum; k++ {
 						// using only +1 in the indexes because of the continous element removal
 						diskLayout = slices.Insert(diskLayout, idxBackward+1, []int{-1})
-						diskLayout = sliceutil.RemoveIntArrSliceElement(diskLayout, idxForward+1)
+						diskLayout = matrixutil.RemoveMatrixRow(diskLayout, idxForward+1)
 					}
 
 					saveIndex = idxBackward - 1

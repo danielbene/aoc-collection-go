@@ -22,15 +22,6 @@ tasks:
       - |
         curl "https://adventofcode.com/{{.YEAR}}/day/`echo {{.DAY}} | sed 's/^0*//'`/input" -H "cookie: session=${AOC_SESSION}" -o "{{.SOLUTIONS_ROOT}}{{.YEAR}}/{{.DAY}}/input.txt" 2>/dev/null
 
-  runz-*-*:
-    desc: "run both part of the specified day eg.: run-2024-01"
-    vars:
-      YEAR: "{{index .MATCH 0}}"
-      DAY: "{{index .MATCH 1}}"
-    cmds:
-      - task: run-{{.YEAR}}-{{.DAY}}-1
-      - task: run-{{.YEAR}}-{{.DAY}}-2
-
   run-*-*-*:
     desc: "run specified day and part eg.: run-2024-01-1"
     vars:
