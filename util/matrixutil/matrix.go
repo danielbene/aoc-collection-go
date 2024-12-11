@@ -8,7 +8,7 @@ type Position struct {
 }
 
 type Matrix[T any] struct {
-	Matrix          [][]T    // 2D slice representation of a matrix with generic type
+	Matrix          [][]T    // Matrix[Y][X] - 2D slice representation of a matrix with generic type
 	CurrentPosition Position // Cursor for seeking through the matrix
 	RowCount        int      // Total number of rows in the matrix
 	ColCount        int      // Total number of columns in a matrix row
