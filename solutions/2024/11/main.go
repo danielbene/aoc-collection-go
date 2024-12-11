@@ -45,20 +45,12 @@ func Part2(puzzleInput string) (solution int) {
 }
 
 func blink_o_matic(count int) (solution int) {
-	var stones []uint64
-	for _, line := range input.Lines {
-		tmp := strings.Split(line, " ")
-		for _, num := range tmp {
-			n, _ := strconv.Atoi(num)
-			stones = append(stones, uint64(n))
-		}
-	}
-
 	// key: stone value, value: counter
 	// instead of keeping track of individual stones we manage a ledger with stone counters
 	ledger := make(map[uint64]int)
-	for _, stone := range stones {
-		ledger[stone]++
+	for _, num := range strings.Split(input.Lines[0], " ") {
+		n, _ := strconv.Atoi(num)
+		ledger[uint64(n)]++
 	}
 
 	// doin da blinkers
