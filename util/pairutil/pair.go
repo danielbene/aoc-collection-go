@@ -1,22 +1,36 @@
 package pairutil
 
-type Pairs struct {
-	Pairs []Pair
+// looks good, but does not really useful :)
+// keeping it for reference
+type Pair[T comparable] struct {
+	Left  T
+	Right T
 }
 
-// NOTE: probably better to use a specific implementation
-// for the task with well defined types
-type Pair struct {
-	Left  any
-	Right any
+type Pairs[T comparable] struct {
+	Pairs []Pair[T]
 }
 
-func (p Pairs) GetFirstByLeft(left any) (any, bool) {
+func (p *Pairs[T]) Put(left T, right T) {
+	p.Pairs = append(p.Pairs, Pair[T]{Left: left, Right: right})
+}
+
+func (p Pairs[T]) GetLefts() []T {
+	var lefts []T
+	for _, pair := range p.Pairs {
+		lefts = append(lefts, pair.Left)
+	}
+
+	return lefts
+}
+
+func (p Pairs[T]) GetFirstByLeft(left T) (T, bool) {
 	for _, val := range p.Pairs {
 		if val.Left == left {
 			return val.Right, true
 		}
 	}
 
-	return nil, false
+	var defValue T
+	return defValue, false
 }
