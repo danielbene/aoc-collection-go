@@ -19,7 +19,7 @@ func (mtx Matrix[T]) GetValueDirection(dir directions.Direction) (value T, succe
 }
 
 func (mtx Matrix[T]) GetValue(x int, y int) (value T, successful bool) {
-	if mtx.validPosition(x, y) {
+	if mtx.isInsideBoundaries(x, y) {
 		var defValue T
 		return defValue, false
 	}
@@ -32,7 +32,7 @@ func (mtx Matrix[T]) MoveDirection(dir directions.Direction) (successful bool) {
 }
 
 func (mtx Matrix[T]) Move(x int, y int) (successful bool) {
-	if mtx.validPosition(x, y) {
+	if mtx.isInsideBoundaries(x, y) {
 		return false
 	}
 
@@ -41,7 +41,7 @@ func (mtx Matrix[T]) Move(x int, y int) (successful bool) {
 	return true
 }
 
-func (mtx Matrix[T]) validPosition(x int, y int) bool {
+func (mtx Matrix[T]) isInsideBoundaries(x int, y int) bool {
 	if x < 0 || y < 0 || x >= mtx.ColCount || y >= mtx.RowCount {
 		return false
 	}
