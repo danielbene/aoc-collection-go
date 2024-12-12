@@ -14,6 +14,27 @@ type Matrix[T any] struct {
 	ColCount        int      // Total number of columns in a matrix row
 }
 
+func InitByChars[T comparable](inputString []string) Matrix[T] {
+	var mtx Matrix[T]
+	mtx.Matrix = make([][]T, len(inputString))
+
+	for y, line := range inputString {
+		mtx.Matrix[y] = make([]T, len(line))
+
+		for x, ch := range line {
+			switch any(mtx.Matrix[y][x]).(type) {
+			case string:
+				// FIXME: this does not work yet
+				mtx.Matrix[y][x] = any(ch).(T)
+			default:
+				panic("Not implemented!")
+			}
+		}
+	}
+
+	return mtx
+}
+
 func (mtx Matrix[T]) GetValueDirection(dir directions.Direction) (value T, successful bool) {
 	return mtx.GetValue(mtx.CurrentPosition.X+dir.X, mtx.CurrentPosition.Y+dir.Y)
 }
