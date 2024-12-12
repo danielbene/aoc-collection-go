@@ -37,9 +37,8 @@ var input aocutil.ProcessedInput
 func Part1(puzzleInput string) (solution int) {
 	aocutil.ProcessInput(puzzleInput, &input)
 
-	mtx := matrixutil.InitByChars[string](input.Lines)
-
-	fmt.Println(mtx.Matrix)
+	mtx := matrixutil.Init[string](input.Lines)
+	mtx.Print()
 
 	return solution
 }

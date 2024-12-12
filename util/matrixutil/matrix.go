@@ -1,6 +1,10 @@
 package matrixutil
 
-import "aoc/util/matrixutil/directions"
+import (
+	"aoc/util/matrixutil/directions"
+	"fmt"
+	"strconv"
+)
 
 type Position struct {
 	X int // Column (element index in current row)
@@ -14,20 +18,30 @@ type Matrix[T any] struct {
 	ColCount        int      // Total number of columns in a matrix row
 }
 
-func InitByChars[T comparable](inputString []string) Matrix[T] {
+func (mtx Matrix[T]) Print() {
+	for _, row := range mtx.Matrix {
+		fmt.Println(row)
+	}
+}
+
+// initialize a new matrix object based on the input string
+func Init[T ~string | ~int](inputString []string) Matrix[T] {
 	var mtx Matrix[T]
-	mtx.Matrix = make([][]T, len(inputString))
+
+	mtx.RowCount = len(inputString)
+	mtx.ColCount = len(inputString[0])
+	mtx.Matrix = make([][]T, mtx.RowCount)
 
 	for y, line := range inputString {
-		mtx.Matrix[y] = make([]T, len(line))
+		mtx.Matrix[y] = make([]T, mtx.ColCount)
 
 		for x, ch := range line {
 			switch any(mtx.Matrix[y][x]).(type) {
 			case string:
-				// FIXME: this does not work yet
-				mtx.Matrix[y][x] = any(ch).(T)
-			default:
-				panic("Not implemented!")
+				mtx.Matrix[y][x] = any(string(ch)).(T)
+			case int:
+				num, _ := strconv.Atoi(string(ch))
+				mtx.Matrix[y][x] = any(int(num)).(T) // TODO: test
 			}
 		}
 	}
