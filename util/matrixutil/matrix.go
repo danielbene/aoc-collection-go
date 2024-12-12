@@ -18,7 +18,7 @@ type Matrix[T any] struct {
 	ColCount        int      // Total number of columns in a matrix row
 }
 
-func (mtx Matrix[T]) Print() {
+func (mtx *Matrix[T]) Print() {
 	for _, row := range mtx.Matrix {
 		fmt.Println(row)
 	}
@@ -49,12 +49,12 @@ func Init[T ~string | ~int](inputString []string) Matrix[T] {
 	return mtx
 }
 
-func (mtx Matrix[T]) GetValueDirection(dir directions.Direction) (value T, successful bool) {
+func (mtx *Matrix[T]) GetValueDirection(dir directions.Direction) (value T, successful bool) {
 	return mtx.GetValue(mtx.CurrentPosition.X+dir.X, mtx.CurrentPosition.Y+dir.Y)
 }
 
-func (mtx Matrix[T]) GetValue(x int, y int) (value T, successful bool) {
-	if mtx.isInsideBoundaries(x, y) {
+func (mtx *Matrix[T]) GetValue(x int, y int) (value T, successful bool) {
+	if !mtx.IsInsideBoundaries(x, y) {
 		var defValue T
 		return defValue, false
 	}
@@ -62,12 +62,12 @@ func (mtx Matrix[T]) GetValue(x int, y int) (value T, successful bool) {
 	return mtx.Matrix[y][x], true
 }
 
-func (mtx Matrix[T]) MoveDirection(dir directions.Direction) (successful bool) {
+func (mtx *Matrix[T]) MoveDirection(dir directions.Direction) (successful bool) {
 	return mtx.Move(mtx.CurrentPosition.X+dir.X, mtx.CurrentPosition.Y+dir.Y)
 }
 
-func (mtx Matrix[T]) Move(x int, y int) (successful bool) {
-	if mtx.isInsideBoundaries(x, y) {
+func (mtx *Matrix[T]) Move(x int, y int) (successful bool) {
+	if !mtx.IsInsideBoundaries(x, y) {
 		return false
 	}
 
@@ -76,7 +76,7 @@ func (mtx Matrix[T]) Move(x int, y int) (successful bool) {
 	return true
 }
 
-func (mtx Matrix[T]) isInsideBoundaries(x int, y int) bool {
+func (mtx *Matrix[T]) IsInsideBoundaries(x int, y int) bool {
 	if x < 0 || y < 0 || x >= mtx.ColCount || y >= mtx.RowCount {
 		return false
 	}

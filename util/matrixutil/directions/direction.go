@@ -15,3 +15,16 @@ var (
 	DOWN_LEFT  = Direction{X: -1, Y: 1}
 	DOWN_RIGHT = Direction{X: 1, Y: 1}
 )
+
+func GetDirections() []Direction {
+	return []Direction{
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT,
+		UP_LEFT,
+		UP_RIGHT,
+		DOWN_LEFT,
+		DOWN_RIGHT,
+	}
+}
